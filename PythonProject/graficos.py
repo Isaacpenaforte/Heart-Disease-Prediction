@@ -1,4 +1,6 @@
 import seaborn as sns
+import numpy as np
+
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, classification_report
 from dadosCliente import caracteristicasDetalhadas, caracteristicas , caracteristicasValores
@@ -8,9 +10,15 @@ import warnings
 
 warnings.filterwarnings("ignore", category=UserWarning, module='sklearn')
 
-def plotar_grafico_dispersao(feature_index,X_train_scaled,y_train):
+def plotar_grafico_dispersao(feature_index,X_train ,X_train_scaled,y_train):
+    mean = np.mean(X_train, axis=0)
+    std = np.std(X_train, axis=0)
+
+    # Converte o valor de X_train para apresentar os valores corretamente nos gráficos
+    X_train_original = (X_train_scaled[:, feature_index] * std.iloc[feature_index]) + mean.iloc[feature_index]
+
     plt.figure(figsize=(10, 5))
-    plt.scatter(X_train_scaled[:, feature_index], y_train, c=y_train, cmap='viridis', edgecolor='k')
+    plt.scatter(X_train_original, y_train, c=y_train, cmap='viridis', edgecolor='k')
     plt.xlabel(caracteristicasDetalhadas[feature_index])
     plt.ylabel('Risco')
     plt.title(f'Heart Dataset - {caracteristicas[feature_index]} vs Risco')
@@ -19,6 +27,7 @@ def plotar_grafico_dispersao(feature_index,X_train_scaled,y_train):
 
 def plotar_grafico_barras(feature_index,dataset):
     coluna = dataset.columns[feature_index]
+
     # Agrupa os dados por gênero e calcula a contagem de cada classe de risco
     grouped_data = dataset.groupby([coluna, 'target']).size().unstack()
 
@@ -29,28 +38,29 @@ def plotar_grafico_barras(feature_index,dataset):
     plt.title(f'Heart Dataset - Distribuição do Risco por {caracteristicas[feature_index]}')
     plt.legend(['Sem Risco', 'Com Risco'])
     rotulos = caracteristicasValores[feature_index].split(',')
-    plt.xticks(range(len(rotulos)), rotulos)
+    plt.xticks(range(len(rotulos)), rotulos, rotation=0)
     plt.show()
 
-def plotar_graficos(X_train_scaled,dataset, y_train, y_test, y_pred):
+
+def plotar_graficos(X_train_scaled, X_train, dataset, y_train, y_test, y_pred):
     # Plotando gráficos de dispersão para as características dos dados
     indices_barras = [1, 2, 5, 6, 8, 10, 11, 12]
     for feature_index in range(X_train_scaled.shape[1]):
         if feature_index in indices_barras:
             plotar_grafico_barras(feature_index, dataset)
         else:
-            plotar_grafico_dispersao(feature_index, X_train_scaled, y_train)
+            plotar_grafico_dispersao(feature_index, X_train, X_train_scaled, y_train)
 
     # --------------
 
     # Avaliando o modelo
     accuracy = accuracy_score(y_test, y_pred)
-    class_report = classification_report(y_test, y_pred)
+    class_report = classification_report(y_test, y_pred, target_names=["Sem Risco","Com Risco"])
 
     # --------------
 
     # Exibindo os resultados
-    print("Acurácia:", accuracy) # Exibe a acuracia
+    print("\nAcurácia:", accuracy) # Exibe a acuracia
     print("Relatório de Classificação:")
     print(class_report)
 

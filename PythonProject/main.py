@@ -52,10 +52,10 @@ elif escolha == 2:
     algoritmo=int(input('Qual algoritmo deseja usar?\n1- K-Nearest Neighbors\n2- Random Forest\n'))
     if escolha == 1:
         # Plota grafico knn
-        plotar_graficos(X_train_scaled, dataset, y_train, y_test, y_pred_knn)
+        plotar_graficos(X_train_scaled, X_train, dataset, y_train, y_test, y_pred_knn)
     elif escolha == 2:
         # Plota grafico randomforest
-        plotar_graficos(X_train_scaled, dataset, y_train, y_test, y_pred_rf)
+        plotar_graficos(X_train_scaled, X_train, dataset, y_train, y_test, y_pred_rf)
     else:
         print('Entrada invalida, tente novamente\n')
 

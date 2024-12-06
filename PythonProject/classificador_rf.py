@@ -3,7 +3,7 @@ from sklearn.ensemble import RandomForestClassifier
 def classificar_randomforest(X_train_scaled, y_train, X_test_scaled):
 
     # Inicializa o classificador Random Forest
-    rf_classifier = RandomForestClassifier(n_estimators=150) # n_estimators = número de arvores criadas
+    rf_classifier = RandomForestClassifier(n_estimators=100) # n_estimators = número de arvores criadas
 
     # Treina o modelo Random Forest
     rf_classifier.fit(X_train_scaled, y_train)
